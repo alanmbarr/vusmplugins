@@ -27,6 +27,8 @@ from security_monkey import app
 from security_monkey.datastore import Account
 from vusmplugins.exceptions import AzureCredsError
 from six import StringIO
+# In order to import CLI core __init__.py needs to be added to the venv/lib/pyversion/site-packages/azure-cli-core-VERSION.egg/ sub folders
+# We currently dont want to import all of azure cli 
 from azure.cli.core import get_default_cli
 
 
