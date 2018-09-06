@@ -1,16 +1,3 @@
-#     Copyright 2018 Veterans United Home Loans
-#
-#     Licensed under the Apache License, Version 2.0 (the "License");
-#     you may not use this file except in compliance with the License.
-#     You may obtain a copy of the License at
-#
-#         http://www.apache.org/licenses/LICENSE-2.0
-#
-#     Unless required by applicable law or agreed to in writing, software
-#     distributed under the License is distributed on an "AS IS" BASIS,
-#     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#     See the License for the specific language governing permissions and
-#     limitations under the License.
 """
 .. module: vusmplugins.watchers.security_center
     :platform: Unix
@@ -22,12 +9,13 @@
 
 """
 from security_monkey import app
-from vusmplugins.util import get_azure_creds, iter_accounts
+from vusmplugins.util import get_azure_creds, iter_accounts, azure_cli_general_command, azure_cli_login_with_service_principal
 from security_monkey.datastore import Account
 from security_monkey.decorators import record_exception
 from vusmplugins.exceptions import InvalidResponseCodeFromAzureError
 from security_monkey.watcher import Watcher, ChangeItem
 import requests
+import json
 
 AZURE_URL = "https://management.azure.com/subscriptions/"
 
@@ -85,6 +73,7 @@ class AzureSecurityCenter(Watcher):
                 'Authorization': 'Bearer {}'.format(token)
         }
 
+        #subscription = json.loads(azure_cli_general_command(['account', 'list']))[0]['id']
         subscription = self.azure_creds.get(account).get("subscription")
         url = "{}{}/providers/microsoft.Security/policies?api-version=2015-06-01-preview".format(AZURE_URL, subscription)
 

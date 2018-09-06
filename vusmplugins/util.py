@@ -1,16 +1,3 @@
-#     Copyright 2018 Veterans United Home Loans
-#
-#     Licensed under the Apache License, Version 2.0 (the "License");
-#     you may not use this file except in compliance with the License.
-#     You may obtain a copy of the License at
-#
-#         http://www.apache.org/licenses/LICENSE-2.0
-#
-#     Unless required by applicable law or agreed to in writing, software
-#     distributed under the License is distributed on an "AS IS" BASIS,
-#     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#     See the License for the specific language governing permissions and
-#     limitations under the License.
 """
 .. module: vusmplugins.util
     :platform: Unix
@@ -27,10 +14,7 @@ from security_monkey import app
 from security_monkey.datastore import Account
 from vusmplugins.exceptions import AzureCredsError
 from six import StringIO
-# In order to import CLI core __init__.py needs to be added to the venv/lib/pyversion/site-packages/azure-cli-core-VERSION.egg/ sub folders
-# We currently dont want to import all of azure cli 
-from azure.cli.core import get_default_cli
-
+from subprocess import call
 
 """
 Should be replaced with az login and a service principal account
@@ -135,13 +119,13 @@ def azure_cli_login_with_service_principal(account_names):
             raise AzureCredsError(account.identifier)
         # /usr/bin/az login --service-principal --username 8c3673b3-9310-40d4-857d-d08115bc471b --password /usr/local/src/security_monkey/env-config/tmpjXm0RR.pem --tenant f8ff6e6b-7337-47d6-8e7e-f961f8836708
         
-        get_default_cli().invoke(['login', '--serviceprincipal', '--username', creds_file['appID_ServicePrincipal'],'--password', creds_file['password'], '--tenant', account.identifier])
+        azure_cli_general_command(['login', '--service-principal', '--username', creds_file['appID_ServicePrincipal'],'--password', creds_file['password'], '--tenant', account.identifier])
 
     return org_creds
 
 def azure_cli_general_command( cliArgArray ):
     io = StringIO()
-    get_default_cli().invoke( cliArgArray, out_file=io)
+    call(['/usr/bin/az'] + cliArgArray, stdout=io)
     return io.getvalue()
 
 

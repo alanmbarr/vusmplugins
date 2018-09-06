@@ -1,16 +1,3 @@
-#     Copyright 2018 Veterans United Home Loans
-#
-#     Licensed under the Apache License, Version 2.0 (the "License");
-#     you may not use this file except in compliance with the License.
-#     You may obtain a copy of the License at
-#
-#         http://www.apache.org/licenses/LICENSE-2.0
-#
-#     Unless required by applicable law or agreed to in writing, software
-#     distributed under the License is distributed on an "AS IS" BASIS,
-#     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#     See the License for the specific language governing permissions and
-#     limitations under the License.
 """
 .. module: vusmplugins.watchers.ad
     :platform: Unix
@@ -29,7 +16,6 @@ from vusmplugins.exceptions import InvalidResponseCodeFromAzureError
 from security_monkey.watcher import Watcher, ChangeItem
 
 
-
 class AzureActiveDirectory(Watcher):
     index = 'ad'
     i_am_singular = 'ad'
@@ -38,7 +24,6 @@ class AzureActiveDirectory(Watcher):
 
     def __init__(self, accounts=None, debug=False):
         super(AzureActiveDirectory, self).__init__(accounts=accounts, debug=debug)
-        
 
     def slurp(self):
         @record_exception(source="{index}-watcher".format(index=self.index))
@@ -90,8 +75,6 @@ class AzureActiveDirectory(Watcher):
 
         return result
         
-
-
 class AzureActiveDirectoryItem(ChangeItem):
     def __init__(self, account=None, name=None, arn=None, config=None, source_watcher=None):
         super(AzureActiveDirectoryItem, self).__init__(index=AzureActiveDirectory.index,
