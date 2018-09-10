@@ -125,7 +125,8 @@ def azure_cli_login_with_service_principal(account_names):
 
 def azure_cli_general_command( cliArgArray ):
     io = StringIO()
-    p = Popen(['/usr/bin/az'] + cliArgArray], stdout=PIPE)
+    callMe = ['/usr/bin/az'] + cliArgArray
+    p = Popen(callMe, stdout=PIPE)
     output, err = p.communicate()
     rc = p.returncode
     if err:
