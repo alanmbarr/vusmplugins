@@ -14,7 +14,7 @@ from security_monkey import app
 from security_monkey.datastore import Account
 from vusmplugins.exceptions import AzureCredsError
 from six import StringIO
-from subprocess import call
+from subprocess import Popen, PIPE
 
 """
 Should be replaced with az login and a service principal account
@@ -125,8 +125,12 @@ def azure_cli_login_with_service_principal(account_names):
 
 def azure_cli_general_command( cliArgArray ):
     io = StringIO()
-    call(['/usr/bin/az'] + cliArgArray, stdout=io)
-    return io.getvalue()
+    p = Popen(['/usr/bin/az' + cliArgArray], stdout=PIPE)
+    output, err = p.communicate()
+    rc = p.returncode
+    if err:
+        app.logger.debug(err+ Azure CLI error)
+    return output
 
 
     
