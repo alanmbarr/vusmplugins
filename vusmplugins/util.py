@@ -129,7 +129,7 @@ def azure_cli_general_command( cliArgArray ):
     output, err = p.communicate()
     rc = p.returncode
     if err:
-        app.logger.debug(err+ Azure CLI error)
+        app.logger.debug(err+ "Azure CLI error")
     return output
 
 
