@@ -9,7 +9,9 @@ setup(
     entry_points={
         "security_monkey.plugins": [
             "vusmplugins.account_managers.azure_account = vusmplugins.account_managers.azure_account",
-            "vusmplugins.watchers.azure.ad = vusmplugins.watchers.azure.ad"
+            "vusmplugins.watchers.azure.ad = vusmplugins.watchers.azure.ad",
+            "vusmplugins.watchers.azure.network = vusmplugins.watchers.azure.network",
+            "vusmplugins.auditors.azure.network = vusmplugins.auditors.azure.network"
         ]
     }
 )
