@@ -39,7 +39,7 @@ class AzureNetworkAuditor(Auditor):
             protocol = "TCP" in item.get("protocol")
             pfx = item.get("sourceAddressPrefix")
             sourceAddr = "*" in pfx or "0.0.0.0" in pfx or "<nw>/0" in pfx or "/0" in pfx or "internet" in pfx or "any" in pfx
-
+            app.logger.debug("auditing")
             if allow and portRange and direction and protocol and sourceAddr:
                 self.add_issue(10, tag, item, notes="RDP is open")
             else:

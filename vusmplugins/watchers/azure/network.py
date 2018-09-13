@@ -27,7 +27,7 @@ class AzureNetwork(Watcher):
 
     def slurp(self):
         @record_exception(source="{index}-watcher".format(index=self.index))
-        def fetch_active_directory_details(**kwargs):
+        def fetch_details(**kwargs):
             item_list = []
             account = Account.query.filter(Account.name == kwargs["account_name"]).first()
 
@@ -53,7 +53,7 @@ class AzureNetwork(Watcher):
                 return [], kwargs["exception_map"]
 
             # Exception handling complexities...
-            results = fetch_active_directory_details(**kwargs)
+            results = fetch_details(**kwargs)
             if not results:
                 return [], kwargs["exception_map"]
 
@@ -71,7 +71,7 @@ class AzureNetwork(Watcher):
         cliArgArray = ['network', 'nsg', 'list']
 
         result = azure_cli_general_command( cliArgArray )
-
+        app.logger.debug(result)
         return result
         
 class AzureNetworkItem(ChangeItem):
