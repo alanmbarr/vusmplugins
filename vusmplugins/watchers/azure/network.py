@@ -1,5 +1,5 @@
 """
-.. module: vusmplugins.watchers.__SHORTNAME__
+.. module: vusmplugins.watchers.network
     :platform: Unix
     :synopsis: Watcher for Azure Active Directory.
 
@@ -16,14 +16,14 @@ from vusmplugins.exceptions import InvalidResponseCodeFromAzureError
 from security_monkey.watcher import Watcher, ChangeItem
 
 
-class __NAME__(Watcher):
-    index = __SHORTNAME__
-    i_am_singular = __SHORTNAME__ 
-    i_am_plural = __SHORTNAME__ 
-    account_type = __ACCOUNTMANAGERTYPE__
+class AzureNetwork(Watcher):
+    index = 'network'
+    i_am_singular = 'network'
+    i_am_plural = 'network'
+    account_type = 'Azure'
 
     def __init__(self, accounts=None, debug=False):
-        super(__NAME__, self).__init__(accounts=accounts, debug=debug)
+        super(AzureNetwork, self).__init__(accounts=accounts, debug=debug)
 
     def slurp(self):
         @record_exception(source="{index}-watcher".format(index=self.index))
@@ -35,7 +35,7 @@ class __NAME__(Watcher):
             app.logger.debug("Fetching initial org details for: {}".format(account.identifier))
             security_details = self.get_security_details(account.identifier)
 
-            item_list.append(__NAME__Item(
+            item_list.append(AzureNetworkItem(
                 account=account.name,
                 name=account.identifier,
                 arn=account.identifier,
@@ -68,15 +68,15 @@ class __NAME__(Watcher):
         azure_cli_login_with_service_principal(account)
 
         # REPLACE ME
-        cliArgArray = []
+        cliArgArray = ['network', 'nsg' 'list']
 
         result = azure_cli_general_command( cliArgArray )
 
         return result
         
-class __NAME__Item(ChangeItem):
+class AzureNetworkItem(ChangeItem):
     def __init__(self, account=None, name=None, arn=None, config=None, source_watcher=None):
-        super(__NAME__Item, self).__init__(index=__NAME__.index,
+        super(AzureNetworkItem, self).__init__(index=AzureNetwork.index,
                                             region="universal",
                                             account=account,
                                             name=name,
