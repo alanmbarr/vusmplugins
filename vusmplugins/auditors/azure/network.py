@@ -30,17 +30,17 @@ class AzureNetworkAuditor(Auditor):
         :return:
         """
         tag = "Access is too open and set to Allow"
-        result = [match for match in jmespath.compile('[].securityRules[]').search(item.config)]
+        
 
-        for item in result:
-            allow = item.get("access") == "Allow"
-            portRange = "3389" in item.get("destinationPortRange") or "*" in item.get("destinationPortRange")
-            direction = "Inbound" in item.get("direction")
-            protocol = "TCP" in item.get("protocol")
-            pfx = item.get("sourceAddressPrefix")
-            sourceAddr = "*" in pfx or "0.0.0.0" in pfx or "<nw>/0" in pfx or "/0" in pfx or "internet" in pfx or "any" in pfx
-            app.logger.debug("auditing")
-            if allow and portRange and direction and protocol and sourceAddr:
-                self.add_issue(10, tag, item, notes="RDP is open")
-            else:
-                pass
+        
+        allow = item.config.get("access") == "Allow"
+        portRange = "3389" in item.config.get("destinationPortRange") or "*" in item.config.get("destinationPortRange")
+        direction = "Inbound" in item.config.get("direction")
+        protocol = "TCP" in item.config.get("protocol")
+        pfx = item.config.get("sourceAddressPrefix")
+        sourceAddr = "*" in pfx or "0.0.0.0" in pfx or "<nw>/0" in pfx or "/0" in pfx or "internet" in pfx or "any" in pfx
+        app.logger.debug("auditing")
+        if allow and portRange and direction and protocol and sourceAddr:
+            self.add_issue(10, tag, item, notes="RDP is open")
+        else:
+            pass
