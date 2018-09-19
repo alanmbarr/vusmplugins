@@ -68,7 +68,7 @@ class AzureNetwork(Watcher):
         azure_cli_login_with_service_principal(account)
 
         # REPLACE ME
-        cliArgArray = ['network', 'nsg', 'list', '--query', '"[].[name,securityRules]"']
+        cliArgArray = ['network', 'nsg', 'list']
 
         result = azure_cli_general_command( cliArgArray )
         result = json.loads(result)
