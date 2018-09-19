@@ -34,13 +34,13 @@ class AzureNetworkAuditor(Auditor):
 
         
         allow = item.config.get("access") == "Allow"
-        portRange = "3389" in item.config.get("destinationPortRange") or "*" in item.config.get("destinationPortRange")
-        direction = "Inbound" in item.config.get("direction")
-        protocol = "TCP" in item.config.get("protocol")
+        portRange = item.config.get("destinationPortRange") == "3389" or item.config.get("destinationPortRange") == "*"
+        direction = item.config.get("direction") == "Inbound"
+        protocol = item.config.get("protocol") == "TCP"
         pfx = item.config.get("sourceAddressPrefix")
-        sourceAddr = "*" in pfx or "0.0.0.0" in pfx or "<nw>/0" in pfx or "/0" in pfx or "internet" in pfx or "any" in pfx
-        app.logger.debug("auditing")
+        sourceAddr = pfx == "*" or pfx == "0.0.0.0" or pfx == "<nw>/0" or pfx == "/0" or pfx == "internet" or pfx == "any"
         if allow and portRange and direction and protocol and sourceAddr:
             self.add_issue(10, tag, item, notes="RDP is open")
         else:
+            app.logger.debug("auditing failed to find issue")
             pass
