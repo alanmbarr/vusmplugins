@@ -14,7 +14,7 @@ from security_monkey.datastore import Account
 from security_monkey.decorators import record_exception
 from vusmplugins.exceptions import InvalidResponseCodeFromAzureError
 from security_monkey.watcher import Watcher, ChangeItem
-
+import jmespath, json
 
 class AzureNetwork(Watcher):
     index = 'network'
@@ -71,8 +71,20 @@ class AzureNetwork(Watcher):
         cliArgArray = ['network', 'nsg', 'list', '--query', '"[].[name,securityRules]"']
 
         result = azure_cli_general_command( cliArgArray )
-        app.logger.debug(result)
-        return result
+        result = json.loads(result)
+        transformed = [match for match in jmespath.compile('[].securityRules[]').search(result)]
+        app.logger.debug(transformed)
+        newDict = {}
+        for item in transformed:
+            allow = item.get("access")
+            portRange = item.get("destinationPortRange")
+            direction = item.get("direction")
+            protocol = item.get("protocol")
+            pfx = item.get("sourceAddressPrefix")
+        newDict.update(allow=allow, portRange=portRange, direction=direction, protocol=protocol, pfx=pfx)
+        app.logger.debug(newDict)
+        return newDict
+
         
 class AzureNetworkItem(ChangeItem):
     def __init__(self, account=None, name=None, arn=None, config=None, source_watcher=None):
