@@ -68,22 +68,21 @@ class AzureNetwork(Watcher):
         azure_cli_login_with_service_principal(account)
 
         # REPLACE ME
-        cliArgArray = ['network', 'nsg', 'list']
+        #cliArgArray = ['network', 'nsg', 'list']
+        cliArgArray = ['network', 'nsg', 'list', '--query', "[*].[name,securityRules]" ]
 
         result = azure_cli_general_command( cliArgArray )
         result = json.loads(result)
-        transformed = [match for match in jmespath.compile('[].securityRules[]').search(result)]
-
-        newDict = {}
-        for item in transformed:
-            allow = item.get("access")
-            portRange = item.get("destinationPortRange")
-            direction = item.get("direction")
-            protocol = item.get("protocol")
-            pfx = item.get("sourceAddressPrefix")
-        newDict.update(access=allow, destinationPortRange=portRange, direction=direction, protocol=protocol, sourceAddressPrefix=pfx)
-        app.logger.debug(newDict)
-        return newDict
+        
+        networkDict = {'access':'','destinationPortRange':'','direction':'','protocol':'','sourceAddressPrefix':''}
+        nsgs = []            
+        for network in result:
+            for r in network[1]:
+                d = networkDict.copy()
+                d.update(access=r.get('access'), destinationPortRange=r.get('destinationPortRange'), direction=r.get('direction'), protocol=r.get('protocol'), sourceAddressPrefix=r.get('sourceAddressPrefix'))
+                nsgs.append(d)
+        
+        return nsgs
         
 class AzureNetworkItem(ChangeItem):
     def __init__(self, account=None, name=None, arn=None, config=None, source_watcher=None):
