@@ -75,14 +75,15 @@ class AzureNetwork(Watcher):
         result = json.loads(result)
         
         networkDict = {'access':'','destinationPortRange':'','direction':'','protocol':'','sourceAddressPrefix':''}
-        nsgs = []            
+        nsgs = []
         for network in result:
             for r in network[1]:
                 d = networkDict.copy()
                 d.update(access=r.get('access'), destinationPortRange=r.get('destinationPortRange'), direction=r.get('direction'), protocol=r.get('protocol'), sourceAddressPrefix=r.get('sourceAddressPrefix'))
                 nsgs.append(d)
         
-        return nsgs
+        
+        return {'networkGroups':nsgs}
         
 class AzureNetworkItem(ChangeItem):
     def __init__(self, account=None, name=None, arn=None, config=None, source_watcher=None):
