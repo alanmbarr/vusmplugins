@@ -29,22 +29,23 @@ class AzureNetworkAuditor(Auditor):
         """
         tag = "RDP is allowed"
         
-        portRange = False
-        ports = item.config.get("destinationPortRange").split(",")
-        if "*" in ports or "3389" in ports:
-            portRange = True
-        else:
-            pr = PortRange(ports)
-            if pr.port_from <= 3389 <= pr.port_to:
+        for network in item.config.get("networkGroups"):
+            portRange = False
+            ports = network.get("destinationPortRange").split(",")
+            if "*" in ports or "3389" in ports:
                 portRange = True
-            
-        allow = item.config.get("access") == "Allow"
-        direction = item.config.get("direction") == "Inbound"
-        protocol = item.config.get("protocol") == "TCP"
-        pfx = item.config.get("sourceAddressPrefix")
-        sourceAddr = pfx == "*" or pfx == "0.0.0.0" or pfx == "<nw>/0" or pfx == "/0" or pfx == "internet" or pfx == "any"
-        if allow and portRange and direction and protocol and sourceAddr:
-            self.add_issue(10, tag, item, notes="RDP is open")
+            else:
+                pr = PortRange(ports)
+                if pr.port_from <= 3389 <= pr.port_to:
+                    portRange = True
+
+            allow = network.get("access") == "Allow"
+            direction = network.get("direction") == "Inbound"
+            protocol = network.get("protocol") == "TCP"
+            pfx = network.get("sourceAddressPrefix")
+            sourceAddr = pfx == "*" or pfx == "0.0.0.0" or pfx == "<nw>/0" or pfx == "/0" or pfx == "internet" or pfx == "any"
+            if allow and portRange and direction and protocol and sourceAddr:
+                self.add_issue(10, tag, item, notes="RDP is open")
 
     def check_for_ssh_allowed(self, item):
         """
@@ -54,19 +55,20 @@ class AzureNetworkAuditor(Auditor):
         """
         tag = "SSH is allowed"
 
-        portRange = False
-        ports = item.config.get("destinationPortRange").split(",")
-        if "*" in ports or "22" in ports:
-            portRange = True
-        else:
-            pr = PortRange(ports)
-            if pr.port_from <= 22 <= pr.port_to:
+        for network in item.config.get("networkGroups"):
+            portRange = False
+            ports = network.get("destinationPortRange").split(",")
+            if "*" in ports or "22" in ports:
                 portRange = True
-                
-        allow = item.config.get("access") == "Allow"
-        direction = item.config.get("direction") == "Inbound"
-        protocol = item.config.get("protocol") == "TCP"
-        pfx = item.config.get("sourceAddressPrefix")
-        sourceAddr = pfx == "*" or pfx == "0.0.0.0" or pfx == "<nw>/0" or pfx == "/0" or pfx == "internet" or pfx == "any"
-        if allow and portRange and direction and protocol and sourceAddr:
-            self.add_issue(10, tag, item, notes="SSH is open")
+            else:
+                pr = PortRange(ports)
+                if pr.port_from <= 22 <= pr.port_to:
+                    portRange = True
+
+            allow = network.get("access") == "Allow"
+            direction = network.get("direction") == "Inbound"
+            protocol = network.get("protocol") == "TCP"
+            pfx = network.get("sourceAddressPrefix")
+            sourceAddr = pfx == "*" or pfx == "0.0.0.0" or pfx == "<nw>/0" or pfx == "/0" or pfx == "internet" or pfx == "any"
+            if allow and portRange and direction and protocol and sourceAddr:
+                self.add_issue(10, tag, item, notes="SSH is open")
