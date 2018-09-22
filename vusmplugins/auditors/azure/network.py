@@ -11,6 +11,7 @@ from security_monkey import app
 from security_monkey.auditor import Auditor
 from vusmplugins.watchers.azure.network import AzureNetwork
 import jmespath
+from port_range import PortRange
 
 class AzureNetworkAuditor(Auditor):
     index = AzureNetwork.index
@@ -18,7 +19,6 @@ class AzureNetworkAuditor(Auditor):
     i_am_plural = AzureNetwork.i_am_plural
 
     def __init__(self, accounts=None, debug=False):
-        app.logger.debug("constructing auditor")
         super(AzureNetworkAuditor, self).__init__(accounts=accounts, debug=debug)
 
     def check_for_rdp_allowed(self, item):
@@ -29,8 +29,16 @@ class AzureNetworkAuditor(Auditor):
         """
         tag = "RDP is allowed"
         
+        portRange = False
+        ports = item.config.get("destinationPortRange").split(",")
+        if "*" in ports or "3389" in ports:
+            portRange = True
+        else:
+            pr = PortRange(ports)
+            if pr.port_from <= 3389 <= pr.port_to:
+                portRange = True
+            
         allow = item.config.get("access") == "Allow"
-        portRange = item.config.get("destinationPortRange") == "3389" or item.config.get("destinationPortRange") == "*"
         direction = item.config.get("direction") == "Inbound"
         protocol = item.config.get("protocol") == "TCP"
         pfx = item.config.get("sourceAddressPrefix")
@@ -46,8 +54,16 @@ class AzureNetworkAuditor(Auditor):
         """
         tag = "SSH is allowed"
 
+        portRange = False
+        ports = item.config.get("destinationPortRange").split(",")
+        if "*" in ports or "22" in ports:
+            portRange = True
+        else:
+            pr = PortRange(ports)
+            if pr.port_from <= 22 <= pr.port_to:
+                portRange = True
+                
         allow = item.config.get("access") == "Allow"
-        portRange = item.config.get("destinationPortRange") == "22" or item.config.get("destinationPortRange") == "*"
         direction = item.config.get("direction") == "Inbound"
         protocol = item.config.get("protocol") == "TCP"
         pfx = item.config.get("sourceAddressPrefix")
