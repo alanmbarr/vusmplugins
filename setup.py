@@ -5,7 +5,7 @@ setup(
     version="0.1-dev0",
     packages=find_packages(),
     include_package_data=True,
-    install_requires=["security_monkey","jmespath"],
+    install_requires=["security_monkey","jmespath", "port-range"],
     entry_points={
         "security_monkey.plugins": [
             "vusmplugins.account_managers.azure_account = vusmplugins.account_managers.azure_account",
