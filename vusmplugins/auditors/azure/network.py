@@ -69,4 +69,4 @@ class AzureNetworkAuditor(Auditor):
         pfx = item.config.get("sourceAddressPrefix")
         sourceAddr = pfx == "*" or pfx == "0.0.0.0" or pfx == "<nw>/0" or pfx == "/0" or pfx == "internet" or pfx == "any"
         if allow and portRange and direction and protocol and sourceAddr:
-            self.add_issue(10, tag, item, notes="RDP is open")
+            self.add_issue(10, tag, item, notes="SSH is open")
