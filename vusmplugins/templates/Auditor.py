@@ -10,7 +10,6 @@
 from security_monkey import app
 from security_monkey.auditor import Auditor
 from vusmplugins.watchers.__WATCHERNAMESPACE__ import __WATCHER__
-import jmespath
 
 class __NAME__Auditor(Auditor):
     index = __WATCHERNAMESPACE__.index
@@ -20,7 +19,6 @@ class __NAME__Auditor(Auditor):
     app.logger.debug("initializing auditor class")
 
     def __init__(self, accounts=None, debug=False):
-        app.logger.debug("constructing auditor")
         super(__NAME__Auditor, self).__init__(accounts=accounts, debug=debug)
 
     def check_for_provisioning_monitoring_agent(self, item):
@@ -30,11 +28,9 @@ class __NAME__Auditor(Auditor):
         :return:
         """
         tag = "Account contains policy with security monitoring agent off."
-        app.logger.debug(item) 
+        ## Do Something with the security item and mark an issue if it doesn't comply
         result = [match for match in jmespath.compile('value[*].properties.logCollection').search(item.config)]
-        #result = [match.value for match in parse("$.value[*].properties.logCollection").find(security_details.config)]
 
         if "Off" in result:
             self.add_issue(10, tag, item, notes="Account contains unprovisioned monitoring agents")
-        else:
-            app.logger.debug("nothing found") 
+        
